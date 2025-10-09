@@ -1,0 +1,226 @@
+version: 2
+updates:
+
+  # Enable version updates for npm packages
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "maintainer-username"
+    assignees:
+      - "maintainer-username"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "frontend"
+      - "automated"
+    allow:
+      - dependency-type: "production"
+      - dependency-type: "development"
+    ignore:
+      # Ignore major version updates for these packages
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Group all patch and minor updates together
+      patch-and-minor:
+        dependency-type: "production"
+        update-types: ["version-update:semver-patch", "version-update:semver-minor"]
+        patterns:
+          - "*"
+      # Group development dependencies
+      dev-dependencies:
+        dependency-type: "development"
+        update-types: ["version-update:semver-patch", "version-update:semver-minor"]
+        patterns:
+          - "*"
+
+  # Enable version updates for Python packages
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "10:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "maintainer-username"
+    assignees:
+      - "maintainer-username"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "backend"
+      - "automated"
+    allow:
+      - dependency-type: "production"
+      - dependency-type: "development"
+    ignore:
+      # Ignore major version updates for these packages
+      - dependency-name: "django"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "djangorestframework"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "celery"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Group all patch and minor updates together
+      patch-and-minor:
+        dependency-type: "production"
+        update-types: ["version-update:semver-patch", "version-update:semver-minor"]
+        patterns:
+          - "*"
+      # Group development dependencies
+      dev-dependencies:
+        dependency-type: "development"
+        update-types: ["version-update:semver-patch", "version-update:semver-minor"]
+        patterns:
+          - "*"
+
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "11:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "maintainer-username"
+    assignees:
+      - "maintainer-username"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "automated"
+    allow:
+      - dependency-name: "node"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "python"
+        update-types: ["version-update:semver-minor"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "12:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "maintainer-username"
+    assignees:
+      - "maintainer-username"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+    allow:
+      # Only allow updates for these actions
+      - dependency-name: "actions/checkout"
+      - dependency-name: "actions/setup-node"
+      - dependency-name: "actions/setup-python"
+      - dependency-name: "actions/upload-artifact"
+      - dependency-name: "actions/download-artifact"
+      - dependency-name: "actions/github-script"
+      - dependency-name: "docker/build-push-action"
+      - dependency-name: "docker/setup-buildx-action"
+      - dependency-name: "docker/login-action"
+      - dependency-name: "docker/metadata-action"
+      - dependency-name: "aquasecurity/trivy-action"
+      - dependency-name: "github/codeql-action"
+      - dependency-name: "trufflesecurity/trufflehog"
+      - dependency-name: "semgrep/semgrep-action"
+      - dependency-name: "codecov/codecov-action"
+      - dependency-name: "amannn/action-semantic-pull-request"
+      - dependency-name: "dorny/paths-filter"
+      - dependency-name: "peter-evans/find-comment"
+      - dependency-name: "peter-evans/create-or-update-comment"
+      - dependency-name: "hmarr/auto-approve-action"
+      - dependency-name: "actions/dependency-review-action"
+      - dependency-name: "DavidAnson/markdownlint-action"
+      - dependency-name: "gaurav-nelson/github-action-markdown-link-check"
+      - dependency-name: "preactjs/compressed-size-action"
+
+  # Enable version updates for Terraform modules (if applicable)
+  - package-ecosystem: "terraform"
+    directory: "/infrastructure/terraform"
+    schedule:
+      interval: "monthly"
+      day: "first monday"
+      time: "13:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "maintainer-username"
+    assignees:
+      - "maintainer-username"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "terraform"
+      - "automated"
+    allow:
+      - dependency-type: "production"
+
+  # Enable version updates for Helm charts (if applicable)
+  - package-ecosystem: "helm"
+    directory: "/infrastructure/helm"
+    schedule:
+      interval: "monthly"
+      day: "first tuesday"
+      time: "14:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "maintainer-username"
+    assignees:
+      - "maintainer-username"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "helm"
+      - "automated"
+    allow:
+      - dependency-type: "production"
+
+# Global settings
+registries:
+  # Configure private registry access if needed
+  docker-hub:
+    type: "docker-registry"
+    url: "https://registry.hub.docker.com"
+    username: ${{ secrets.DOCKER_USERNAME }}
+    password: ${{ secrets.DOCKER_PASSWORD }}
+  
+  # Configure GitHub Container Registry access
+  github-container-registry:
+    type: "docker-registry"
+    url: "https://ghcr.io"
+    username: ${{ github.actor }}
+    password: ${{ secrets.GITHUB_TOKEN }}
