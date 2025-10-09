@@ -1,4 +1,4 @@
-# 📚 Video AI Editor Documentation
+# 📚 LuwiEditor-AI Documentation
 
 Bem-vindo à documentação oficial do Video AI Editor! Este portal contém todos os recursos necessários para entender, usar, contribuir e implantar o editor de vídeo com IA.
 
@@ -63,10 +63,10 @@ Recursos para manter nossa comunidade saudável e produtiva:
 
 ### Precisa de Ajuda?
 
-- 🐛 [Reportar um Bug](https://github.com/video-ai-editor/video-ai-editor/issues/new?assignees=&labels=bug&template=bug_report.md)
-- 💡 [Sugerir uma Funcionalidade](https://github.com/video-ai-editor/video-ai-editor/issues/new?assignees=&labels=enhancement&template=feature_request.md)
-- 💬 [Discussões da Comunidade](https://github.com/video-ai-editor/video-ai-editor/discussions)
-- 📧 [Contato Direto](mailto:support@video-ai-editor.com)
+- 🐛 [Reportar um Bug](https://github.com/LuwiEditor-AI/LuwiEditor-AI-Code/issues/new?assignees=&labels=bug&template=bug_report.md)
+- 💡 [Sugerir uma Funcionalidade](https://github.com/LuwiEditor-AI/LuwiEditor-AI-Code/issues/new?assignees=&labels=enhancement&template=feature_request.md)
+- 💬 [Discussões da Comunidade](https://github.com/LuwiEditor-AI/LuwiEditor-AI-Code/discussions)
+- 📧 [Contato Direto](mailto:support@luwieditorai.xyz)
 
 ## 🗺️ Mapa de Navegação
 
@@ -177,7 +177,7 @@ Agradecemos contribuições para melhorar nossa documentação! Aqui estão algu
 
 - Use o botão "👍/👎" no final de cada página
 - Abra uma issue com a tag `documentation`
-- Participe das [discussões](https://github.com/video-ai-editor/video-ai-editor/discussions)
+- Participe das [discussões](https://github.com/LuwiEditor-AI/LuwiEditor-AI-Code/discussions)
 
 ## 🔗 Recursos Externos
 
@@ -199,16 +199,15 @@ Agradecemos contribuições para melhorar nossa documentação! Aqui estão algu
 
 Se você não conseguir encontrar o que está procurando ou tiver sugestões para melhorar esta documentação:
 
-- 📧 **Email**: docs@video-ai-editor.com
-- 💬 **Discord**: [Canal #documentation](https://discord.gg/video-ai-editor)
-- 🐙 **GitHub**: [Issues](https://github.com/video-ai-editor/video-ai-editor/issues)
+- 📧 **Email**: docs@luwieditorai.xyz
+- 🐙 **GitHub**: [Issues](https://github.com/LuwiEditor-AI/LuwiEditor-AI-Code/issues)
 
 ---
 
 <div align="center">
   <sub>
     📚 Documentação mantida com ❤️ pela 
-    <a href="https://github.com/video-ai-editor">Video AI Editor Community</a>
+    <a href="https://github.com/LuwiEditor-AI">LuwiEditor-AI Community</a>
   </sub>
 </div>
 ```
