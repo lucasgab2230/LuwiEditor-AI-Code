@@ -1,0 +1,391 @@
+name: Pull Request Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '20.x'
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  # Job de verificação de mudanças
+  changes-detected:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.changes.outputs.frontend }}
+      backend: ${{ steps.changes.outputs.backend }}
+      docs: ${{ steps.changes.outputs.docs }}
+      config: ${{ steps.changes.outputs.config }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+            backend:
+              - 'backend/**'
+            docs:
+              - 'docs/**'
+              - '**.md'
+            config:
+              - '.github/**'
+              - 'docker-compose.yml'
+              - 'Dockerfile*'
+
+  # Job de verificação de PR
+  pr-validation:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate PR title
+        uses: amannn/action-semantic-pull-request@v5
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          scopes: |
+            frontend
+            backend
+            ai
+            auth
+            video
+            editor
+            deployment
+            docs
+          requireScope: false
+          validateDescription: true
+          descriptionMinLength: 10
+          subjectPattern: ^(?![A-Z]).+$           subjectPatternError: |
+            The subject {subject} must start with lowercase and not contain a period at the end.
+          wip: true
+          githubBaseUrl: ${{ github.server_url }}
+
+      - name: Check for draft PR
+        if: github.event.pull_request.draft == true
+        run: |
+          echo "🚧 This is a draft PR - some checks may be skipped"
+          echo "draft=true" >> $GITHUB_ENV
+
+      - name: Check PR size
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: context.issue.number
+            });
+            
+            const additions = pr.additions;
+            const deletions = pr.deletions;
+            const total = additions + deletions;
+            
+            console.log(`PR size: +${additions} -${deletions} (${total} total)`);
+            
+            if (total > 1000) {
+              console.log('⚠️ Large PR detected - consider breaking it into smaller PRs');
+            }
+            
+            if (total > 2000) {
+              core.setFailed('❌ PR too large (>2000 changes). Please break it into smaller PRs.');
+            }
+
+      - name: Check for linked issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: context.issue.number
+            });
+            
+            const body = pr.body || '';
+            const issueRegex = /(fixes|fix|closes|close|resolves|resolve|refs|references)\s+#(\d+)/gi;
+            const hasLinkedIssue = issueRegex.test(body);
+            
+            if (!hasLinkedIssue && !pr.body.includes('NO-ISSUE')) {
+              core.warning('⚠️ No linked issue found. Consider linking this PR to an issue.');
+            }
+
+      - name: Check for tests
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              ...context.repo,
+              pull_number: context.issue.number
+            });
+            
+            const hasCodeChanges = files.some(file => 
+              file.filename.match(/\.(js|jsx|ts|tsx|py)$/) && 
+              file.status !== 'removed'
+            );
+            
+            const hasTestFiles = files.some(file => 
+              file.filename.includes('.test.') || 
+              file.filename.includes('.spec.') ||
+              file.filename.includes('__tests__')
+            );
+            
+            if (hasCodeChanges && !hasTestFiles) {
+              core.warning('⚠️ Code changes detected but no test files found. Consider adding tests.');
+            }
+
+  # Job de análise de código
+  code-analysis:
+    name: Code Analysis
+    runs-on: ubuntu-latest
+    needs: changes-detected
+    if: needs.changes-detected.outputs.frontend == 'true' || needs.changes-detected.outputs.backend == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        if: needs.changes-detected.outputs.frontend == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Setup Python
+        if: needs.changes-detected.outputs.backend == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install frontend dependencies
+        if: needs.changes-detected.outputs.frontend == 'true'
+        working-directory: ./frontend
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Install backend dependencies
+        if: needs.changes-detected.outputs.backend == 'true'
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run ESLint on changed files
+        if: needs.changes-detected.outputs.frontend == 'true'
+        working-directory: ./frontend
+        run: |
+          npx eslint $(git diff --name-only --diff-filter=ACMRTUXB ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -E '\.(js|jsx|ts|tsx)$' | xargs) || true
+
+      - name: Run Prettier check on changed files
+        if: needs.changes-detected.outputs.frontend == 'true'
+        working-directory: ./frontend
+        run: |
+          npx prettier --check $(git diff --name-only --diff-filter=ACMRTUXB ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -E '\.(js|jsx|ts|tsx|css|md)$' | xargs) || true
+
+      - name: Run flake8 on changed files
+        if: needs.changes-detected.outputs.backend == 'true'
+        working-directory: ./backend
+        run: |
+          git diff --name-only --diff-filter=ACMRTUXB ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -E '\.py$' | xargs flake8 || true
+
+      - name: SonarCloud Scan
+        if: needs.changes-detected.outputs.frontend == 'true' || needs.changes-detected.outputs.backend == 'true'
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # Job de verificação de dependências
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency Review (JavaScript)
+        if: needs.changes-detected.outputs.frontend == 'true'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+
+      - name: Check for license conflicts
+        if: needs.changes-detected.outputs.frontend == 'true'
+        run: |
+          cd frontend
+          npx license-checker --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC' --summary || true
+
+  # Job de verificação de segurança
+  security-review:
+    name: Security Review
+    runs-on: ubuntu-latest
+    needs: changes-detected
+    if: needs.changes-detected.outputs.frontend == 'true' || needs.changes-detected.outputs.backend == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy on PR
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Check for secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug --only-verified
+
+  # Job de verificação de documentação
+  docs-review:
+    name: Documentation Review
+    runs-on: ubuntu-latest
+    needs: changes-detected
+    if: needs.changes-detected.outputs.docs == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check markdown files
+        uses: DavidAnson/markdownlint-action@v1
+        with:
+          files: '**/*.md'
+          config: '.markdownlint.jsonc'
+
+      - name: Check links in documentation
+        uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: 'yes'
+          use-verbose-mode: 'yes'
+
+      - name: Check for TODO comments
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execSync } = require('child_process');
+            const todos = execSync('git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs grep -l "TODO\\|FIXME\\|XXX" || true').toString();
+            
+            if (todos) {
+              core.warning('⚠️ TODO/FIXME comments found in changed files:\n' + todos);
+            }
+
+  # Job de comentário no PR
+  pr-comment:
+    name: PR Comment
+    runs-on: ubuntu-latest
+    needs: [pr-validation, code-analysis, dependency-review, security-review, docs-review]
+    if: always() && github.event.pull_request.draft == false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate PR summary
+        uses: actions/github-script@v7
+        id: pr-summary
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              ...context.repo,
+              pull_number: context.issue.number
+            });
+            
+            const { data: files } = await github.rest.pulls.listFiles({
+              ...context.repo,
+              pull_number: context.issue.number
+            });
+            
+            const jsFiles = files.filter(f => f.filename.match(/\.(js|jsx|ts|tsx)$/)).length;
+            const pyFiles = files.filter(f => f.filename.match(/\.py$/)).length;
+            const mdFiles = files.filter(f => f.filename.match(/\.md$/)).length;
+            const totalFiles = files.length;
+            
+            const summary = `
+            ## 📊 PR Summary
+            
+            - **Total files changed**: ${totalFiles}
+            - **JavaScript/TypeScript files**: ${jsFiles}
+            - **Python files**: ${pyFiles}
+            - **Documentation files**: ${mdFiles}
+            - **Lines added**: ${pr.additions}
+            - **Lines removed**: ${pr.deletions}
+            
+            ## ✅ Checks Status
+            - **PR Validation**: ${{ needs.pr-validation.result }}
+            - **Code Analysis**: ${{ needs.code-analysis.result }}
+            - **Dependency Review**: ${{ needs.dependency-review.result }}
+            - **Security Review**: ${{ needs.security-review.result }}
+            - **Documentation Review**: ${{ needs.docs-review.result }}
+            `;
+            
+            return summary;
+
+      - name: Find comment
+        uses: peter-evans/find-comment@v3
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ${{ steps.pr-summary.outputs.result }}
+            
+            ---
+            
+            🤖 This comment was automatically generated by the PR review workflow.
+          edit-mode: replace
+
+  # Job de aprovação automática
+  auto-approve:
+    name: Auto Approve
+    runs-on: ubuntu-latest
+    if: |
+      github.event.pull_request.user.login == 'dependabot[bot]' ||
+      github.event.pull_request.user.login == 'github-actions[bot]' ||
+      contains(github.event.pull_request.title, 'chore(deps)')
+    steps:
+      - name: Auto-approve dependabot PRs
+        uses: hmarr/auto-approve-action@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          review-message: "Auto-approved automated dependency update"
