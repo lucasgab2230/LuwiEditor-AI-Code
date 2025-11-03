@@ -3,6 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-class Sound_effectsView(APIView):
+class SoundEffectsView(APIView):
     def post(self, request):
         return Response({'message': 'sound_effects endpoint'}, status=status.HTTP_200_OK)

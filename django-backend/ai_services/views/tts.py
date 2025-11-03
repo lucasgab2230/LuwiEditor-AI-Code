@@ -3,6 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-class TtsView(APIView):
+class TTSView(APIView):
     def post(self, request):
         return Response({'message': 'tts endpoint'}, status=status.HTTP_200_OK)

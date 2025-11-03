@@ -59,16 +59,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'luwieditor'),
-        'USER': os.getenv('POSTGRES_USER', 'luwieditor'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'luwieditor'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+# Use SQLite for tests, PostgreSQL for production
+import sys
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', 'luwieditor'),
+            'USER': os.getenv('POSTGRES_USER', 'luwieditor'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'luwieditor'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -3,6 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-class Music_generationView(APIView):
+class MusicGenerationView(APIView):
     def post(self, request):
         return Response({'message': 'music_generation endpoint'}, status=status.HTTP_200_OK)
