@@ -2,55 +2,55 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.post('/upscale', (req, res) => {
+router.post('/upscale', (_req, res) => {
   res.json({ message: 'Video upscaling endpoint' });
 });
 
-router.post('/music-generation', (req, res) => {
+router.post('/music-generation', (_req, res) => {
   res.json({ message: 'Music generation endpoint' });
 });
 
-router.post('/sound-effects', (req, res) => {
+router.post('/sound-effects', (_req, res) => {
   res.json({ message: 'Sound effects generation endpoint' });
 });
 
-router.post('/transitions', (req, res) => {
+router.post('/transitions', (_req, res) => {
   res.json({ message: 'Transition generation endpoint' });
 });
 
-router.post('/visual-effects', (req, res) => {
+router.post('/visual-effects', (_req, res) => {
   res.json({ message: 'Visual effects endpoint' });
 });
 
-router.post('/tts', (req, res) => {
+router.post('/tts', (_req, res) => {
   res.json({ message: 'Text-to-speech endpoint' });
 });
 
-router.post('/text-to-video', (req, res) => {
+router.post('/text-to-video', (_req, res) => {
   res.json({ message: 'Text-to-video endpoint' });
 });
 
-router.post('/color-correction', (req, res) => {
+router.post('/color-correction', (_req, res) => {
   res.json({ message: 'Color correction endpoint' });
 });
 
-router.post('/aspect-ratio', (req, res) => {
+router.post('/aspect-ratio', (_req, res) => {
   res.json({ message: 'Aspect ratio conversion endpoint' });
 });
 
-router.post('/noise-reduction', (req, res) => {
+router.post('/noise-reduction', (_req, res) => {
   res.json({ message: 'Noise reduction endpoint' });
 });
 
-router.post('/silence-detection', (req, res) => {
+router.post('/silence-detection', (_req, res) => {
   res.json({ message: 'Silence detection endpoint' });
 });
 
-router.post('/shorts-generator', (req, res) => {
+router.post('/shorts-generator', (_req, res) => {
   res.json({ message: 'Shorts generator endpoint' });
 });
 
-router.post('/chat', (req, res) => {
+router.post('/chat', (_req, res) => {
   res.json({ message: 'AI chat endpoint' });
 });
 

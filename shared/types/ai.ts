@@ -1,3 +1,5 @@
+import type { AspectRatio } from './project';
+
 export interface AIModelRequest {
   id: string;
   type: AIModelType;
@@ -219,4 +221,3 @@ export interface ChatResponse {
   suggestions?: string[];
 }
 
-export type AspectRatio = '16:9' | '9:16' | '4:3' | '3:4' | '1:1';

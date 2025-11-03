@@ -53,16 +53,16 @@ ipcMain.handle('get-app-path', () => {
   return app.getPath('userData');
 });
 
-ipcMain.handle('get-store-value', (event, key: string) => {
+ipcMain.handle('get-store-value', (_event, key: string) => {
   return store.get(key);
 });
 
-ipcMain.handle('set-store-value', (event, key: string, value: any) => {
+ipcMain.handle('set-store-value', (_event, key: string, value: any) => {
   store.set(key, value);
   return true;
 });
 
-ipcMain.handle('delete-store-value', (event, key: string) => {
+ipcMain.handle('delete-store-value', (_event, key: string) => {
   store.delete(key);
   return true;
 });

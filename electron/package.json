@@ -4,7 +4,7 @@
   "main": "dist/main.js",
   "scripts": {
     "dev": "tsx watch src/main.ts",
-    "build": "tsc && electron-builder",
+    "build": "tsc",
     "start": "electron .",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "package": "electron-builder --dir",

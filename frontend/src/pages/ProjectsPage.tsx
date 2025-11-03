@@ -18,7 +18,6 @@ export default function ProjectsPage() {
           <ProjectCard
             title="Sample Project"
             description="A demo video project"
-            thumbnail="/placeholder.jpg"
           />
         </div>
       </div>
@@ -29,11 +28,9 @@ export default function ProjectsPage() {
 function ProjectCard({
   title,
   description,
-  thumbnail,
 }: {
   title: string;
   description: string;
-  thumbnail: string;
 }) {
   return (
     <Link to="/editor/1" className="block">

@@ -42,8 +42,7 @@
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:build": "docker-compose build",
-    "ai:train": "cd ai-models && python train.py",
-    "postinstall": "cd frontend && npm install && cd ../backend && npm install && cd ../electron && npm install"
+    "ai:train": "cd ai-models && python train.py"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
