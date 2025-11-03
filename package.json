@@ -1,0 +1,64 @@
+{
+  "name": "luwieditor-ai",
+  "version": "0.1.0",
+  "description": "Open-source AI-powered video editor with advanced features and no watermark",
+  "main": "electron/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lucasgab2230/LuwiEditor-AI-Code.git"
+  },
+  "keywords": [
+    "video-editor",
+    "ai",
+    "electron",
+    "react",
+    "typescript",
+    "pytorch",
+    "onnx"
+  ],
+  "author": "LuwiEditor-AI Contributors",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lucasgab2230/LuwiEditor-AI-Code/issues"
+  },
+  "homepage": "https://github.com/lucasgab2230/LuwiEditor-AI-Code#readme",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\" \"npm run dev:electron\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:electron": "cd electron && npm run dev",
+    "build": "npm run build:frontend && npm run build:backend && npm run build:electron",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "build:electron": "cd electron && npm run build",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "cd frontend && npm run test",
+    "test:backend": "cd backend && npm run test",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && npm run lint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "type-check": "tsc --noEmit",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "ai:train": "cd ai-models && python train.py",
+    "postinstall": "cd frontend && npm install && cd ../backend && npm install && cd ../electron && npm install"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "concurrently": "^8.2.2",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "frontend",
+    "backend",
+    "electron",
+    "shared"
+  ]
+}

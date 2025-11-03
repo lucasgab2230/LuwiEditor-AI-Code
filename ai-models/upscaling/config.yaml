@@ -1,0 +1,32 @@
+# Model Configuration
+
+model:
+  name: "upscaling_model"
+  version: "1.0.0"
+  input_resolution: [1080, 1920]  # 1080p
+  output_resolution: [2160, 3840]  # 4K
+  channels: 3
+  
+training:
+  batch_size: 8
+  learning_rate: 0.0001
+  num_epochs: 100
+  optimizer: "adam"
+  loss_function: "mse"
+  
+  # Data augmentation
+  augmentation:
+    random_crop: true
+    random_flip: true
+    color_jitter: true
+  
+  # Training dataset
+  dataset:
+    train_path: "data/train"
+    val_path: "data/val"
+    test_path: "data/test"
+  
+inference:
+  batch_size: 1
+  device: "cpu"
+  onnx_path: "../weights/upscaling.onnx"
