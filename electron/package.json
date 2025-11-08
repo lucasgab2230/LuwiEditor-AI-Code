@@ -1,0 +1,48 @@
+{
+  "name": "@luwieditor/electron",
+  "version": "0.1.0",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "electron .",
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
+    "package": "electron-builder --dir",
+    "make": "electron-builder"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3",
+    "eslint": "^8.57.0",
+    "typescript": "^5.5.2",
+    "tsx": "^4.15.0"
+  },
+  "build": {
+    "appId": "com.luwieditor.ai",
+    "productName": "LuwiEditor-AI",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.video",
+      "target": ["dmg", "zip"]
+    },
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Video"
+    }
+  }
+}
