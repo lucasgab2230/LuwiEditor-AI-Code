@@ -1,6 +1,8 @@
 {
   "name": "@luwieditor/electron",
   "version": "0.1.0",
+  "description": "Electron desktop application for LuwiEditor-AI video editor",
+  "author": "LuwiEditor-AI Contributors",
   "main": "dist/main.js",
   "scripts": {
     "dev": "tsx watch src/main.ts",
@@ -17,7 +19,7 @@
     "@types/node": "^20.14.0",
     "@typescript-eslint/eslint-plugin": "^7.13.0",
     "@typescript-eslint/parser": "^7.13.0",
-    "electron": "^31.0.0",
+    "electron": "31.7.7",
     "electron-builder": "^24.13.3",
     "eslint": "^8.57.0",
     "typescript": "^5.5.2",
@@ -26,6 +28,7 @@
   "build": {
     "appId": "com.luwieditor.ai",
     "productName": "LuwiEditor-AI",
+    "electronVersion": "31.7.7",
     "directories": {
       "output": "dist-electron"
     },
